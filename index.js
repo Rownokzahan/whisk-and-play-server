@@ -60,6 +60,12 @@ async function run() {
             const result = await products.insertOne(newToy);
             res.send(result)
         })
+
+        app.delete('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await products.deleteOne({ _id: new ObjectId(id) });
+            res.send(result)
+        })
         
 
         // Send a ping to confirm a successful connection
