@@ -27,29 +27,25 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        client.connect();
 
         const toys = client.db("whiskAndPlayDB").collection("toys");
 
 
         app.get('/toys', async (req, res) => {
-            const result = await toys.find().toArray();
-            res.send(result)
-        })
-
-        app.get('/toys/:category', async (req, res) => {
-            const category = req.params.category;
+            const category = req.query.category;
             if (category === "Baking Kits" || category === "Food Prep Tools" || category === "Utensils") {
                 const result = await toys.find({ category: category }).toArray();
                 return res.send(result);
             }
-            return res.status(400).send({ error: 'Invalid Toy Category' });
+            const result = await toys.find().toArray();
+            res.send(result)
         })
 
         app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
             const result = await toys.find({ _id: new ObjectId(id) }).toArray();
-            res.send(result)
+            res.send(result);
         })
 
         app.get('/all-toys', async (req, res) => {
