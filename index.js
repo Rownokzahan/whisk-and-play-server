@@ -11,9 +11,9 @@ app.use(express.json());
 
 
 
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.jxgrj34.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.jxgrj34.mongodb.net/?retryWrites=true&w=majority`;
 
-const uri = `mongodb://localhost:27017`;
+// const uri = `mongodb://localhost:27017`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -54,8 +54,8 @@ async function run() {
 
         app.get('/all-toys', async (req, res) => {
             const limit = parseInt(req.query.limit) || 20;
-            const toys = await toys.find().limit(limit).toArray();
-            res.send(toys);
+            const result = await toys.find().limit(limit).toArray();
+            res.send(result);
         });
 
         app.get('/my-toys/:email', async (req, res) => {
