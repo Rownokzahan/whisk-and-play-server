@@ -37,6 +37,15 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/toys/:category', async (req, res) => {
+            const category = req.params.category;
+            if (category === "Baking Kits" || category === "Food Prep Tools" || category === "Utensils") {
+                const result = await products.find({ category: category }).toArray();
+                return res.send(result);
+            }
+            return res.status(400).send({ error: 'Invalid Toy Category' });
+        })
+
         app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
             const result = await products.find({ _id: new ObjectId(id) }).toArray();
