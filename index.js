@@ -31,7 +31,7 @@ async function run() {
 
         const products = client.db("whiskAndPlayDB").collection("toys");
 
-        
+
         app.get('/toys', async (req, res) => {
             const result = await products.find().toArray();
             res.send(result)
@@ -39,7 +39,7 @@ async function run() {
 
         app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
-            const result = await products.find({_id: new ObjectId(id)}).toArray();
+            const result = await products.find({ _id: new ObjectId(id) }).toArray();
             res.send(result)
         })
 
@@ -66,7 +66,19 @@ async function run() {
             const result = await products.deleteOne({ _id: new ObjectId(id) });
             res.send(result)
         })
-        
+
+        app.patch('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const body = req.body;
+            const updatedToy = {
+                $set: {
+                    ...body
+                }
+            }
+            const result = await products.updateOne({ _id: new ObjectId(id) }, updatedToy);
+            res.send(result)
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
