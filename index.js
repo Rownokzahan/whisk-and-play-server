@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
@@ -28,8 +28,6 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-
-
         const products = client.db("whiskAndPlayDB").collection("toys");
 
         
@@ -38,7 +36,11 @@ async function run() {
             res.send(result)
         })
 
-
+        app.get('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await products.find({_id: new ObjectId(id)}).toArray();
+            res.send(result)
+        })
 
 
         // Send a ping to confirm a successful connection
