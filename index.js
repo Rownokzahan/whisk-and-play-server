@@ -32,6 +32,11 @@ async function run() {
         const toys = client.db("whiskAndPlayDB").collection("toys");
 
 
+        const indexKeys = { ToyName: 1 };
+        const indexOptions = { name: "toyName" };
+        const result = await toys.createIndex(indexKeys, indexOptions);
+
+
         app.get('/toys', async (req, res) => {
             const category = req.query.category;
             if (category === "Baking Kits" || category === "Food Prep Tools" || category === "Utensils") {
@@ -46,18 +51,6 @@ async function run() {
             const id = req.params.id;
             const result = await toys.find({ _id: new ObjectId(id) }).toArray();
             res.send(result);
-        })
-
-        app.get('/all-toys', async (req, res) => {
-            const limit = parseInt(req.query.limit) || 20;
-            const result = await toys.find().limit(limit).toArray();
-            res.send(result);
-        });
-
-        app.get('/my-toys/:email', async (req, res) => {
-            const email = req.params.email;
-            const result = await toys.find({ sellerEmail: email }).toArray();
-            res.send(result)
         })
 
         app.post('/toys', async (req, res) => {
@@ -81,6 +74,26 @@ async function run() {
                 }
             }
             const result = await toys.updateOne({ _id: new ObjectId(id) }, updatedToy);
+            res.send(result)
+        })
+
+
+        app.get('/all-toys', async (req, res) => {
+            const limit = parseInt(req.query.limit) || 20;
+            const searchText = req.query.search;
+            console.log(searchText);
+            if (searchText) {
+                const result = await toys.find({ ToyName: { $regex: searchText, $options: 'i' } }).limit(limit).toArray();
+                return res.send(result);
+            }
+            
+            const result = await toys.find().limit(limit).toArray();
+            res.send(result);
+        })
+
+        app.get('/my-toys/:email', async (req, res) => {
+            const email = req.params.email;
+            const result = await toys.find({ sellerEmail: email }).toArray();
             res.send(result)
         })
 
