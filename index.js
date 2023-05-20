@@ -51,7 +51,7 @@ async function run() {
         app.get('/toys', async (req, res) => {
             const category = req.query.category;
             if (category === "Baking Kits" || category === "Food Prep Tools" || category === "Utensils") {
-                const result = await toys.find({ category: category }).limit(6).toArray();
+                const result = await toys.find({ category: category }).limit(8).toArray();
                 return res.send(result);
             }
             const result = await toys.find().toArray();
