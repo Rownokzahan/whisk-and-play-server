@@ -29,7 +29,10 @@ const client = new MongoClient(uri, {
         version: ServerApiVersion.v1,
         strict: true,
         deprecationErrors: true,
-    }
+    },
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize:10,
 });
 
 async function run() {
@@ -88,13 +91,26 @@ async function run() {
 
         app.get('/all-toys', async (req, res) => {
             const limit = parseInt(req.query.limit) || 20;
-            const searchText = req.query.search;
-            console.log(searchText);
+
+            const searchText = req.query.search;            
             if (searchText) {
                 const result = await toys.find({ ToyName: { $regex: searchText, $options: 'i' } }).limit(limit).toArray();
                 return res.send(result);
             }
-            
+
+            const sort = req.query.sort;
+            if (sort) {
+                if (sort === "asc") {
+                    const result = await toys.find().sort({ "price": 1 }).limit(limit).toArray();
+                    return res.send(result);
+                }
+
+                if (sort === "desc") {
+                    const result = await toys.find().sort({ "price": -1 }).limit(limit).toArray();
+                    return res.send(result);
+                }
+            }
+
             const result = await toys.find().limit(limit).toArray();
             res.send(result);
         })
