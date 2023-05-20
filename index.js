@@ -51,7 +51,7 @@ async function run() {
         app.get('/toys', async (req, res) => {
             const category = req.query.category;
             if (category === "Baking Kits" || category === "Food Prep Tools" || category === "Utensils") {
-                const result = await toys.find({ category: category }).toArray();
+                const result = await toys.find({ category: category }).limit(6).toArray();
                 return res.send(result);
             }
             const result = await toys.find().toArray();
@@ -117,6 +117,20 @@ async function run() {
 
         app.get('/my-toys/:email', async (req, res) => {
             const email = req.params.email;
+
+            const sort = req.query.sort;
+            if (sort) {
+                if (sort === "asc") {
+                    const result = await toys.find({ sellerEmail: email }).sort({ "price": 1 }).toArray();
+                    return res.send(result);
+                }
+
+                if (sort === "desc") {
+                    const result = await toys.find({ sellerEmail: email }).sort({ "price": -1 }).toArray();
+                    return res.send(result);
+                }
+            }
+
             const result = await toys.find({ sellerEmail: email }).toArray();
             res.send(result)
         })
